@@ -1,12 +1,15 @@
 const express = require('express')
-// 👇 import exported variable at notesDb.js
 const notes = require('../../databases/notesDb')
+const authorize = require('../../middlewares/authorizationMiddleware')
 const app = express()
 
-// 👇 handle GET request method at /note
+//membuat route ini menggunakan authorize/token untuk menjalankan get
+app.use(authorize)
+
 app.get('/note', (req, res) => {
-  // 👇 send the notes array variable
-  res.send(notes)
+  const user = req.user //request user
+  const notesByUser = notes.filter(note => note.username === user.username) //mencari username apakah sudah sesuai dengan yang terdaftar
+  res.send(notesByUser) //menampilkan response  notesByuser
 })
 
 module.exports = app

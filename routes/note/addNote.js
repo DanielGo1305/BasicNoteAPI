@@ -1,14 +1,22 @@
 const express = require('express')
 const notes = require('../../databases/notesDb')
+const authorize = require('../../middlewares/authorizationMiddleware')
+const { nanoid } = require('nanoid')
 const app = express()
 
-// 👇 handle POST request method at /note
+// 👇 use the authorize middleware in this route
+app.use(authorize) //untuk menghandle token di CRUD
+
 app.post('/note', (req, res) => {
-  // 👇 use req "body" property to access body at request to this route and save it to body variable
   const body = req.body
-  // 👇 push into an array anything inside the body
+  const user = req.user
+  body.username = user.username
+  const id = nanoid()
+  body.id = id
   notes.push(body)
   res.send(req.body)
 })
-
+// membuat const req body,username & id. setelah itu mengirim/push request yang diberikan ke notesDb
 module.exports = app
+
+
